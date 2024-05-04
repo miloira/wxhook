@@ -192,4 +192,4 @@ def on_text_message(bot: Bot, event: Event):
 bot.run()
 ```
 
-QQ交流群:625920215
+QQ交流群:625920216
