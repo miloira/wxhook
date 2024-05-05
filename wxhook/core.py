@@ -1,12 +1,12 @@
 import os
 import json
 import typing
+import traceback
+import socketserver
+from functools import lru_cache
 
 import psutil
 import pyee
-import traceback
-import socketserver
-
 import requests
 
 from .events import ALL_MESSAGE, SYSTEM_MESSAGE
@@ -62,8 +62,8 @@ class Bot:
         self.remote_port, self.server_port = self.wechat_manager.get_port()
         self.BASE_URL = f"http://{self.remote_host}:{self.remote_port}"
         self.webhook_url = None
-        self.info = None
         self.DATA_SAVE_PATH = None
+        self.WXHELPER_PATH = None
         self.FILE_SAVE_PATH = None
         self.IMAGE_SAVE_PATH = None
         self.VIDEO_SAVE_PATH = None
@@ -93,12 +93,11 @@ class Bot:
 
     def init_bot(self, bot: "Bot", event: Event) -> None:
         if event.content["sysmsg"]["@type"] == "SafeModuleCfg":
-            bot.info = bot.get_self_info()
             self.DATA_SAVE_PATH = bot.info.dataSavePath
-            self.FILE_SAVE_PATH = os.path.join(self.DATA_SAVE_PATH, "wxhelper/file")
-            self.IMAGE_SAVE_PATH = os.path.join(self.DATA_SAVE_PATH, "wxhelper/image")
-            self.VIDEO_SAVE_PATH = os.path.join(self.DATA_SAVE_PATH, "wxhelper/video")
-            logger.info(bot.info)
+            self.WXHELPER_PATH = os.path.join(self.DATA_SAVE_PATH, "wxhelper")
+            self.FILE_SAVE_PATH = os.path.join(self.WXHELPER_PATH, "file")
+            self.IMAGE_SAVE_PATH = os.path.join(self.WXHELPER_PATH, "image")
+            self.VIDEO_SAVE_PATH = os.path.join(self.WXHELPER_PATH, "video")
             self.call_hook_func(self.on_login, bot)
 
     def set_webhook_url(self, webhook_url: str) -> None:
@@ -115,12 +114,12 @@ class Bot:
         return requests.request("POST", self.BASE_URL + api, *args, **kwargs).json()
 
     def hook_sync_msg(
-            self,
-            ip: str,
-            port: int,
-            enable_http: int = 0,
-            url: str = "http://127.0.0.1:8000",
-            timeout: int = 30
+        self,
+        ip: str,
+        port: int,
+        enable_http: int = 0,
+        url: str = "http://127.0.0.1:8000",
+        timeout: int = 30
     ) -> Response:
         """hook同步消息"""
         data = {
@@ -148,6 +147,7 @@ class Bot:
         """检查登录状态"""
         return Response(**self.call_api("/api/checkLogin"))
 
+    @lru_cache
     def get_self_info(self) -> Account:
         """获取用户信息"""
         return Account(**self.call_api("/api/userInfo")["data"])
@@ -234,7 +234,7 @@ class Bot:
         data = {
             "wxid": wxid
         }
-        return ContactDetail(self.call_api("/api/getContactProfile", json=data)["data"])
+        return ContactDetail(**self.call_api("/api/getContactProfile", json=data)["data"])
 
     def create_room(self, member_ids: list[str]) -> Response:
         """创建群聊"""
@@ -422,6 +422,10 @@ class Bot:
     def test(self) -> Response:
         """测试"""
         return Response(**self.call_api("/api/test"))
+
+    @property
+    def info(self) -> Account:
+        return self.get_self_info()
 
     def on_event(self, raw_data: bytes):
         try:
