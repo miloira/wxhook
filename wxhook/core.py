@@ -46,7 +46,7 @@ class Bot:
         on_after_message: typing.Callable = None,
         on_start: typing.Callable = None,
         on_stop: typing.Callable = None,
-        faked_version: typing.Union[str, None] = None
+        faked_version: typing.Optional[str] = None
     ):
         self.version = "3.9.5.81"
         self.server_host = "127.0.0.1"
@@ -439,6 +439,7 @@ class Bot:
             self.webhook(data)
         except Exception:
             logger.error(traceback.format_exc())
+            logger.error(raw_data)
 
     def handle(self, events: typing.Union[list[str], str, None] = None, once: bool = False):
         def wrapper(func):

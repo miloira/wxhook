@@ -78,18 +78,19 @@ class RawData:
 @dataclass
 class Event:
     """消息事件"""
-    content: typing.Any  # 消息内容，可能包含用户ID和冒号之后的文本内容
-    createTime: int  # 消息创建时间的UNIX时间戳
-    displayFullContent: str  # 完整的消息内容，如果有的话
-    fromUser: str  # 发送消息的用户或群组ID
-    msgId: int  # 消息的唯一标识符
-    msgSequence: int  # 消息序列号
-    pid: int  # 消息的PID
-    signature: str  # 消息签名，包含一系列的配置信息
-    toUser: str  # 消息接收者的用户ID
-    type: int  # 消息类型
-    rawData: RawData  # 原始数据
-    base64Img: typing.Union[str, None] = None  # 图片base64
+    content: typing.Optional[typing.Any] = None  # 消息内容，可能包含用户ID和冒号之后的文本内容
+    base64Img: typing.Optional[str] = None  # 图片base64
+    data: typing.Optional[list] = None  # 朋友圈数据
+    createTime: typing.Optional[int] = None  # 消息创建时间的UNIX时间戳
+    displayFullContent: typing.Optional[str] = None  # 完整的消息内容，如果有的话
+    fromUser: typing.Optional[str] = None  # 发送消息的用户或群组ID
+    msgId: typing.Optional[int] = None  # 消息的唯一标识符
+    msgSequence: typing.Optional[int] = None  # 消息序列号
+    pid: typing.Optional[int] = None  # 消息的PID
+    signature: typing.Optional[str] = None  # 消息签名，包含一系列的配置信息
+    toUser: typing.Optional[str] = None  # 消息接收者的用户ID
+    type: typing.Optional[int] = None  # 消息类型
+    rawData: typing.Optional[RawData] = None  # 原始数据
 
 
 @dataclass
