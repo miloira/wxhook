@@ -25,7 +25,7 @@ def fake_wechat_version(pid: int, old_version: str, new_version: str) -> int:
     return int(result.stdout)
 
 
-def get_processes(process_name: str) -> list[psutil.Process]:
+def get_processes(process_name: str) -> typing.List[psutil.Process]:
     processes = []
     for process in psutil.process_iter():
         if process.name().lower() == process_name.lower():
@@ -80,7 +80,7 @@ class WeChatManager:
         with open(self.filename, "w", encoding="utf-8") as file:
             json.dump(data, file)
 
-    def refresh(self, pid_list: list[int]) -> None:
+    def refresh(self, pid_list: typing.List[int]) -> None:
         data = self.read()
         cleaned_data = []
         remote_port_list = [19000]

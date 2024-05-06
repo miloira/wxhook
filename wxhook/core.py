@@ -210,7 +210,7 @@ class Bot:
         }
         return Response(**self.call_api("/api/sendApplet", json=data))
 
-    def send_room_at(self, room_id: str, wxids: list[str], msg: str) -> Response:
+    def send_room_at(self, room_id: str, wxids: typing.List[str], msg: str) -> Response:
         """发送群@消息"""
         data = {
             "chatRoomId": room_id,
@@ -227,7 +227,7 @@ class Bot:
         }
         return Response(**self.call_api("/api/sendPatMsg", json=data))
 
-    def get_contacts(self) -> list[Contact]:
+    def get_contacts(self) -> typing.List[Contact]:
         """获取联系人列表"""
         return [Contact(**item) for item in self.call_api("/api/getContactList")["data"]]
 
@@ -238,7 +238,7 @@ class Bot:
         }
         return ContactDetail(**self.call_api("/api/getContactProfile", json=data)["data"])
 
-    def create_room(self, member_ids: list[str]) -> Response:
+    def create_room(self, member_ids: typing.List[str]) -> Response:
         """创建群聊"""
         data = {
             "memberIds": ",".join(member_ids)
@@ -266,7 +266,7 @@ class Bot:
         }
         return RoomMembers(**self.call_api("/api/getMemberFromChatRoom", json=data)["data"])
 
-    def add_room_member(self, room_id: str, member_ids: list[str]) -> Response:
+    def add_room_member(self, room_id: str, member_ids: typing.List[str]) -> Response:
         """添加群成员"""
         data = {
             "chatRoomId": room_id,
@@ -274,7 +274,7 @@ class Bot:
         }
         return Response(**self.call_api("/api/addMemberToChatRoom", json=data))
 
-    def delete_room_member(self, room_id: str, member_ids: list[str]) -> Response:
+    def delete_room_member(self, room_id: str, member_ids: typing.List[str]) -> Response:
         """删除群成员"""
         data = {
             "chatRoomId": room_id,
@@ -282,7 +282,7 @@ class Bot:
         }
         return Response(**self.call_api("/api/delMemberFromChatRoom", json=data))
 
-    def invite_room_member(self, room_id: str, member_ids: list[str]) -> Response:
+    def invite_room_member(self, room_id: str, member_ids: typing.List[str]) -> Response:
         """邀请群成员"""
         data = {
             "chatRoomId": room_id,
@@ -408,7 +408,7 @@ class Bot:
         }
         return Response(**self.call_api("/api/ocr", json=data))
 
-    def get_db_info(self) -> list[DB]:
+    def get_db_info(self) -> typing.List[DB]:
         """获取数据库句柄"""
         return [DB(databaseName=item["databaseName"], handle=item["handle"],
                    tables=[Table(**sub_item) for sub_item in item["tables"]]) for item in self.call_api("/api/getDBInfo")]
@@ -443,7 +443,7 @@ class Bot:
             logger.error(traceback.format_exc())
             logger.error(raw_data)
 
-    def handle(self, events: typing.Union[list[str], str, None] = None, once: bool = False) -> typing.Callable[[typing.Callable], None]:
+    def handle(self, events: typing.Union[typing.List[str], str, None] = None, once: bool = False) -> typing.Callable[[typing.Callable], None]:
         def wrapper(func):
             listen = self.event_emitter.on if not once else self.event_emitter.once
             if not events:
