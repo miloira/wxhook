@@ -60,12 +60,13 @@ pip install wxhook
 ```python
 # import os
 # os.environ["WXHOOK_LOG_LEVEL"] = "INFO" # 修改日志输出级别
+# os.environ["WXHOOK_LOG_FORMAT"] = "INFO" # 修改日志输出格式
 from wxhook import Bot
 from wxhook import events
 from wxhook.model import Event
 
 
-def on_login(bot: Bot):
+def on_login(bot: Bot, event: Event):
     print("登录成功之后会触发这个函数")
 
 
@@ -115,11 +116,9 @@ from wxhook import Bot
 from wxhook import events
 from wxhook.model import Event
 
-# faked_version="3.9.10.19"解除微信低版本登录限制
 bot = Bot()
 
-msgid_list = []
-
+msg_id_list = []
 
 @bot.handle(events.TEXT_MESSAGE)
 def on_text_message(bot: Bot, event: Event):
@@ -164,9 +163,9 @@ def on_text_message(bot: Bot, event: Event):
             bot.send_pat(sender, sender)
         elif content.find("置顶消息") != -1:
             bot.top_msg(msg_id)
-            msgid_list.append(msg_id)
+            msg_id_list.append(msg_id)
         elif content.find("取消置顶的消息") != -1:
-            bot.remove_top_msg(sender, msgid_list.pop())
+            bot.remove_top_msg(sender, msg_id_list.pop())
         elif content.find("获取联系人列表") != -1:
             bot.send_text(sender, json.dumps(bot.get_contacts()))
         elif content.find("获取联系人详情") != -1:

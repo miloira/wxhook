@@ -9,8 +9,8 @@ import psutil
 import pyee
 import requests
 
-from .events import ALL_MESSAGE
 from .logger import logger
+from .events import ALL_MESSAGE
 from .model import Event, Account, Contact, ContactDetail, Room, RoomMembers, Table, DB, Response
 from .utils import WeChatManager, start_wechat_with_inject, fake_wechat_version, get_pid, parse_event
 
@@ -429,7 +429,7 @@ class Bot:
     def info(self) -> Account:
         return self.get_self_info()
 
-    def on_event(self, raw_data: bytes):
+    def on_event(self, raw_data: bytes) -> None:
         try:
             data = json.loads(raw_data)
             event = Event(**parse_event(data))
@@ -443,7 +443,7 @@ class Bot:
             logger.error(traceback.format_exc())
             logger.error(raw_data)
 
-    def handle(self, events: typing.Union[list[str], str, None] = None, once: bool = False):
+    def handle(self, events: typing.Union[list[str], str, None] = None, once: bool = False) -> typing.Callable[[typing.Callable], None]:
         def wrapper(func):
             listen = self.event_emitter.on if not once else self.event_emitter.once
             if not events:
@@ -454,11 +454,11 @@ class Bot:
 
         return wrapper
 
-    def exit(self):
+    def exit(self) -> None:
         self.call_hook_func(self.on_stop, self)
         self.process.terminate()
 
-    def run(self):
+    def run(self) -> None:
         try:
             server = socketserver.ThreadingTCPServer((self.server_host, self.server_port), RequestHandler)
             server.bot = self
