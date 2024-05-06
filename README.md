@@ -56,11 +56,10 @@ pip install wxhook
 
 ## 使用示例
 
-消息事件处理例子
 ```python
 # import os
 # os.environ["WXHOOK_LOG_LEVEL"] = "INFO" # 修改日志输出级别
-# os.environ["WXHOOK_LOG_FORMAT"] = "INFO" # 修改日志输出格式
+# os.environ["WXHOOK_LOG_FORMAT"] = "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{message}</level>" # 修改日志输出格式
 from wxhook import Bot
 from wxhook import events
 from wxhook.model import Event
@@ -106,80 +105,4 @@ def on_message(bot: Bot, event: Event):
 
 bot.run()
 ```
-
-接口使用例子
-```python
-import os
-import json
-
-from wxhook import Bot
-from wxhook import events
-from wxhook.model import Event
-
-bot = Bot()
-
-msg_id_list = []
-
-@bot.handle(events.TEXT_MESSAGE)
-def on_text_message(bot: Bot, event: Event):
-    self_id = bot.info.wxid
-    content = event.content
-    sender = event.fromUser
-    msg_id = event.msgId
-    if sender != self_id:
-        if content.find("发送文本") != -1:
-            bot.send_text(sender, "这是一条文本消息")
-        elif content.find("发送图片") != -1:
-            bot.send_image(sender, os.path.abspath("test.png"))
-        elif content.find("发送表情") != -1:
-            bot.send_emotion(sender, os.path.abspath("test.png"))
-        elif content.find("发送文件") != -1:
-            print(print(bot.send_file(sender, os.path.abspath("test.xlsx"))))
-        elif content.find("发送音频") != -1:
-            bot.send_file(sender, os.path.abspath("test.mp3"))
-        elif content.find("发送视频") != -1:
-            print(bot.send_file(sender, os.path.abspath("test.mp4")))
-        elif content.find("创建群聊") != -1:
-            bot.create_room(["wxid1", "wxid2"])
-        elif content.find("获取群成员列表") != -1:
-            print(bot.get_room_members("<chatroomid>"))
-        elif content.find("删除群成员") != -1:
-            bot.delete_room_member("<chatroomid>", ["<wxid>"])
-        elif content.find("添加群成员") != -1:
-            bot.add_room_member("<chatroomid>", ["<wxid>"])
-        elif content.find("邀请群成员") != -1:
-            bot.invite_room_member("<chatroomid>", ["<wxid>"])
-        elif content.find("修改在群聊中的昵称") != -1:
-            print(bot.modify_member_nickname(sender, "<self-wxid>", "测试机器人"))
-        elif content.find("退出群聊") != -1:
-            bot.quit_room("<chatroomid>")
-        elif content.find("at全体成员") != -1:
-            bot.send_room_at(sender, ["notify@all", "<wxid>"], "这是一条at全体成员的消息")
-        elif content.find("发送群at") != -1:
-            bot.send_room_at(sender, ["<wxid1>", "<wxid2>"], "这是一条at群成员的消息")
-        elif content.find("发送群聊拍一拍") != -1:
-            bot.send_pat(sender, "wxid_vqj81fdula0x22")
-        elif content.find("发送私聊拍一拍") != -1:
-            bot.send_pat(sender, sender)
-        elif content.find("置顶消息") != -1:
-            bot.top_msg(msg_id)
-            msg_id_list.append(msg_id)
-        elif content.find("取消置顶的消息") != -1:
-            bot.remove_top_msg(sender, msg_id_list.pop())
-        elif content.find("获取联系人列表") != -1:
-            bot.send_text(sender, json.dumps(bot.get_contacts()))
-        elif content.find("获取联系人详情") != -1:
-            bot.send_text(sender, json.dumps(bot.get_contact("<wxid>")))
-        elif content.find("获取群详情") != -1:
-            print(bot.get_room("<chatroomid>"))
-        elif content.find("收藏消息") != -1:
-            bot.collect_msg(msg_id)
-        elif content.find("收藏图片") != -1:
-            bot.collect_image(sender, os.path.abspath("test.png"))
-        elif content.find("ocr") != -1:
-            print(bot.ocr(os.path.abspath("test.png")))
-
-bot.run()
-```
-
 QQ交流群:625920216
