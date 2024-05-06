@@ -9,10 +9,10 @@ import psutil
 import pyee
 import requests
 
-from .events import ALL_MESSAGE, SYSTEM_MESSAGE
+from .events import ALL_MESSAGE
 from .logger import logger
-from .model import RawData, Event, Account, Contact, ContactDetail, Room, RoomMembers, Table, DB, Response
-from .utils import WeChatManager, start_wechat_with_inject, fake_wechat_version, parse_event
+from .model import Event, Account, Contact, ContactDetail, Room, RoomMembers, Table, DB, Response
+from .utils import WeChatManager, start_wechat_with_inject, fake_wechat_version, get_pid, parse_event
 
 
 class RequestHandler(socketserver.BaseRequestHandler):
@@ -68,22 +68,25 @@ class Bot:
         self.IMAGE_SAVE_PATH = None
         self.VIDEO_SAVE_PATH = None
 
-        code, output = start_wechat_with_inject(self.remote_port)
-        if code == 1:
-            raise Exception(output)
+        try:
+            code, output = start_wechat_with_inject(self.remote_port)
+            if code == 1:
+                raise Exception(output)
+        except Exception:
+            output = get_pid(self.remote_port)
 
         self.process = psutil.Process(int(output))
 
         if self.faked_version is not None:
             if fake_wechat_version(self.process.pid, self.version, faked_version) == 0:
-                logger.info(f"wechat version faked: {self.version} -> {faked_version}")
+                logger.success(f"wechat version faked: {self.version} -> {faked_version}")
             else:
-                logger.info(f"wechat version fake failed.")
+                logger.error(f"wechat version fake failed.")
 
+        logger.info(f"API Server at 0.0.0.0:{self.remote_port}")
         self.wechat_manager.add(self.process.pid, self.remote_port, self.server_port)
-
         self.call_hook_func(self.on_start, self)
-        self.handle(SYSTEM_MESSAGE, once=True)(self.init_bot)
+        self.handle(ALL_MESSAGE, once=True)(self.init_bot)
         self.hook_sync_msg(self.server_host, self.server_port)
 
     @staticmethod
@@ -92,13 +95,12 @@ class Bot:
             return func(*args, **kwargs)
 
     def init_bot(self, bot: "Bot", event: Event) -> None:
-        if event.content["sysmsg"]["@type"] == "SafeModuleCfg":
-            self.DATA_SAVE_PATH = bot.info.dataSavePath
-            self.WXHELPER_PATH = os.path.join(self.DATA_SAVE_PATH, "wxhelper")
-            self.FILE_SAVE_PATH = os.path.join(self.WXHELPER_PATH, "file")
-            self.IMAGE_SAVE_PATH = os.path.join(self.WXHELPER_PATH, "image")
-            self.VIDEO_SAVE_PATH = os.path.join(self.WXHELPER_PATH, "video")
-            self.call_hook_func(self.on_login, bot)
+        self.DATA_SAVE_PATH = bot.info.dataSavePath
+        self.WXHELPER_PATH = os.path.join(self.DATA_SAVE_PATH, "wxhelper")
+        self.FILE_SAVE_PATH = os.path.join(self.WXHELPER_PATH, "file")
+        self.IMAGE_SAVE_PATH = os.path.join(self.WXHELPER_PATH, "image")
+        self.VIDEO_SAVE_PATH = os.path.join(self.WXHELPER_PATH, "video")
+        self.call_hook_func(self.on_login, bot, event)
 
     def set_webhook_url(self, webhook_url: str) -> None:
         self.webhook_url = webhook_url
@@ -409,7 +411,7 @@ class Bot:
     def get_db_info(self) -> list[DB]:
         """获取数据库句柄"""
         return [DB(databaseName=item["databaseName"], handle=item["handle"],
-                   tables=[Table(**subitem) for subitem in item["tables"]]) for item in self.call_api("/api/getDBInfo")]
+                   tables=[Table(**sub_item) for sub_item in item["tables"]]) for item in self.call_api("/api/getDBInfo")]
 
     def exec_sql(self, db_handle: int, sql: str) -> Response:
         """执行SQL命令"""
@@ -430,7 +432,7 @@ class Bot:
     def on_event(self, raw_data: bytes):
         try:
             data = json.loads(raw_data)
-            event = Event(**parse_event(data), rawData=RawData(raw_data))
+            event = Event(**parse_event(data))
             logger.debug(event)
             self.call_hook_func(self.on_before_message, self, event)
             self.event_emitter.emit(str(ALL_MESSAGE), self, event)
@@ -460,7 +462,7 @@ class Bot:
         try:
             server = socketserver.ThreadingTCPServer((self.server_host, self.server_port), RequestHandler)
             server.bot = self
-            logger.info(f"{self.server_host}:{self.server_port}")
+            logger.info(f"Listening Server at {self.server_host}:{self.server_port}")
             server.serve_forever()
         except (KeyboardInterrupt, SystemExit):
             self.exit()

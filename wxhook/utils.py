@@ -24,7 +24,7 @@ def fake_wechat_version(pid: int, old_version: str, new_version: str):
     return int(result.stdout)
 
 
-def get_processes(process_name):
+def get_processes(process_name: str):
     processes = []
     for process in psutil.process_iter():
         if process.name().lower() == process_name.lower():
@@ -32,11 +32,16 @@ def get_processes(process_name):
     return processes
 
 
-def parse_xml(xml):
+def get_pid(port: int):
+    output = subprocess.run(f"netstat -ano | findStr \"{port}\"", capture_output=True, text=True, shell=True).stdout
+    return int(output.split("\n")[0].split("LISTENING")[-1])
+
+
+def parse_xml(xml: str):
     return xmltodict.parse(xml)
 
 
-def parse_event(event, fields=None):
+def parse_event(event: dict, fields=None):
     for field in fields or ["content", "signature"]:
         try:
             if field in event:
@@ -70,11 +75,11 @@ class WeChatManager:
             data = json.load(file)
         return data
 
-    def write(self, data):
+    def write(self, data: dict):
         with open(self.filename, "w", encoding="utf-8") as file:
             json.dump(data, file)
 
-    def refresh(self, pid_list):
+    def refresh(self, pid_list: list[int]):
         data = self.read()
         cleaned_data = []
         remote_port_list = [19000]
@@ -95,14 +100,14 @@ class WeChatManager:
         data = self.read()
         return data["increase_remote_port"] + 1
 
-    def get_listen_port(self, remote_port):
+    def get_listen_port(self, remote_port: int):
         return 19000 - (remote_port - 19000)
 
     def get_port(self):
         remote_port = self.get_remote_port()
         return remote_port, self.get_listen_port(remote_port)
 
-    def add(self, pid, remote_port, server_port):
+    def add(self, pid: int, remote_port: int, server_port: int):
         data = self.read()
         data["increase_remote_port"] = remote_port
         data["wechat"].append({

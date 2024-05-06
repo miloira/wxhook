@@ -65,17 +65,6 @@ class RoomMembers:
 
 
 @dataclass
-class RawData:
-    """原始数据"""
-    data: bytes
-
-    def __repr__(self):
-        return "<RawData>"
-
-    __str__ = __repr__
-
-
-@dataclass
 class Event:
     """消息事件"""
     content: typing.Optional[typing.Any] = None  # 消息内容，可能包含用户ID和冒号之后的文本内容
@@ -90,7 +79,6 @@ class Event:
     signature: typing.Optional[str] = None  # 消息签名，包含一系列的配置信息
     toUser: typing.Optional[str] = None  # 消息接收者的用户ID
     type: typing.Optional[int] = None  # 消息类型
-    rawData: typing.Optional[RawData] = None  # 原始数据
 
 
 @dataclass
