@@ -1,3 +1,3 @@
 from .core import Bot
 
-version = "0.0.6"
+version = "0.0.7"

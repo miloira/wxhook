@@ -70,10 +70,11 @@ class Bot:
 
         try:
             code, output = start_wechat_with_inject(self.remote_port)
-            if code == 1:
-                raise Exception(output)
         except Exception:
-            output = get_pid(self.remote_port)
+            code, output = get_pid(self.remote_port)
+
+        if code == 1:
+            raise Exception(output)
 
         self.process = psutil.Process(int(output))
 

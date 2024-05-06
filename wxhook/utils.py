@@ -33,9 +33,9 @@ def get_processes(process_name: str) -> typing.List[psutil.Process]:
     return processes
 
 
-def get_pid(port: int) -> int:
+def get_pid(port: int) -> typing.Tuple[int, int]:
     output = subprocess.run(f"netstat -ano | findStr \"{port}\"", capture_output=True, text=True, shell=True).stdout
-    return int(output.split("\n")[0].split("LISTENING")[-1])
+    return 0, int(output.split("\n")[0].split("LISTENING")[-1])
 
 
 def parse_xml(xml: str) -> dict:
