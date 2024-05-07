@@ -411,8 +411,13 @@ class Bot:
 
     def get_db_info(self) -> typing.List[DB]:
         """获取数据库句柄"""
-        return [DB(databaseName=item["databaseName"], handle=item["handle"],
-                   tables=[Table(**sub_item) for sub_item in item["tables"]]) for item in self.call_api("/api/getDBInfo")]
+        return [
+            DB(databaseName=item["databaseName"], handle=item["handle"], tables=[
+                Table(**sub_item)
+                for sub_item in item["tables"]
+            ])
+            for item in self.call_api("/api/getDBInfo")
+        ]
 
     def exec_sql(self, db_handle: int, sql: str) -> Response:
         """执行SQL命令"""
