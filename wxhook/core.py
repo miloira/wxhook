@@ -41,11 +41,11 @@ class Bot:
 
     def __init__(
         self,
-        on_login: typing.Callable = None,
-        on_before_message: typing.Callable = None,
-        on_after_message: typing.Callable = None,
-        on_start: typing.Callable = None,
-        on_stop: typing.Callable = None,
+        on_login: typing.Optional[typing.Callable[["Bot", Event], typing.Any]] = None,
+        on_before_message: typing.Optional[typing.Callable[["Bot", Event], typing.Any]] = None,
+        on_after_message: typing.Optional[typing.Callable[["Bot", Event], typing.Any]] = None,
+        on_start: typing.Optional[typing.Callable[["Bot"], typing.Any]] = None,
+        on_stop: typing.Optional[typing.Callable[["Bot"], typing.Any]] = None,
         faked_version: typing.Optional[str] = None
     ):
         self.version = "3.9.5.81"
