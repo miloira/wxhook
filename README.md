@@ -105,4 +105,4 @@ def on_message(bot: Bot, event: Event):
 
 bot.run()
 ```
-付费框架请联系作者QQ：690126048
+QQ交流群：625920216
