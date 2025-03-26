@@ -105,4 +105,6 @@ def on_message(bot: Bot, event: Event):
 
 bot.run()
 ```
-QQ交流群：625920216
+QQ交流群
+625920216（已满）
+1042756850
