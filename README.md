@@ -110,3 +110,11 @@ QQ交流群
 一群：625920216（已满）
 
 二群：705791428
+
+需要个微/企微开发框架的朋友请联系作者QQ:690126048
+
+个微框架支持接口
+![QQ截图20250620135852](https://github.com/user-attachments/assets/b9d9d179-533d-47bf-877b-ffbefe766875)
+
+企微框架支持接口
+![QQ截图20250620135641](https://github.com/user-attachments/assets/c2153667-a94a-449b-b7d8-c1f99b2a236e)
