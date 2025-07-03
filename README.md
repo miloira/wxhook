@@ -117,13 +117,3 @@ QQ交流群
 微信3.9.5.81版本开发框架项目地址：https://github.com/miloira/wxhook
 
 微信3.9.2.23版本开发框架项目地址：https://github.com/miloira/wxhelper
-
-付费版本：
-
-个微框架支持接口
-![QQ截图20250620135852](https://github.com/user-attachments/assets/b9d9d179-533d-47bf-877b-ffbefe766875)
-
-企微框架支持接口
-![QQ截图20250620135641](https://github.com/user-attachments/assets/c2153667-a94a-449b-b7d8-c1f99b2a236e)
-
-需要个微/企微开发框架的朋友请联系作者QQ:690126048
