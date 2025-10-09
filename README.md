@@ -106,11 +106,7 @@ def on_message(bot: Bot, event: Event):
 bot.run()
 ```
 
-QQ交流群
-
-一群：625920216（已满）
-
-二群：705791428
+QQ交流群：705791428
 
 开源版本：
 
