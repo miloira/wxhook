@@ -106,7 +106,7 @@ def on_message(bot: Bot, event: Event):
 bot.run()
 ```
 
-QQ交流群：705791428
+QQ交流群：705791428（学习微信4.x开发框架）
 
 开源版本：
 
