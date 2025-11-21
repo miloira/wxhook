@@ -157,3 +157,8 @@ def _(bot: WeChat, event: dict):
 
 wechat.run()
 ```
+**特色功能**
+
+1.支持不同微信版本
+
+2.微信3.x登录出现低版本可自动解除
