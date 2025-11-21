@@ -113,3 +113,47 @@ QQ交流群：705791428
 微信3.9.5.81版本开发框架项目地址：https://github.com/miloira/wxhook
 
 微信3.9.2.23版本开发框架项目地址：https://github.com/miloira/wxhelper
+
+# 🎉新版本pywechat已发布，请进QQ群：705791428获取！
+同时支持微信`3.x`版本和`4.x`版本的微信机器人框架
+
+**使用须知**
+1. 微信号头像必须设置，否则框架无法正常运行。
+2. 微信`4.x`版本首次使用本框架，请运行示例代码调起微信后扫码登录。
+
+```python
+from loguru import logger
+
+logger.remove()
+
+from pywechat import WeChat, events
+from pywechat.utils import go_wechat3
+
+wechat = WeChat("4.1.2.17")
+
+
+@wechat.handle(events.WINDOW_HANDLE_CHANGE_MESSAGE)
+def _(bot: WeChat, event: dict):
+    # 解除微信3.x登录低版本限制
+    if bot.version.startswith("3") and event["data"].get("login_hwnd"):
+        go_wechat3(event["data"]["pid"], "all", "Windows 11 x64", "Windows 10 x86", bot.version, "3.9.12.56")
+        bot.refresh_qrcode(event["client_id"])
+
+
+@wechat.handle(events.USER_LOGIN_MESSAGE)
+def _(bot: WeChat, event: dict):
+    print(f"已登录：{event}")
+
+
+@wechat.handle(events.USER_LOGOUT_MESSAGE)
+def _(bot: WeChat, event: dict):
+    print(f"已退出登录：{event}")
+
+
+@wechat.handle(events.TEXT_MESSAGE)
+def _(bot: WeChat, event: dict):
+    print(f"收到文本消息：{event}")
+
+
+wechat.run()
+```
