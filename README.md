@@ -242,19 +242,14 @@ from loguru import logger
 
 logger.remove()
 
+# import os
+# os.environ["PYWECHAT_LOG_LEVEL"] = "INFO" # 关闭调试日志
+
 from pywechat import WeChat, events
-from pywechat.utils import go_wechat3
 
 # 支持微信版本 3.6.0.18/3.9.10.19/3.9.10.27/3.9.11.17/3.9.12.15/3.9.12.45/4.0.1.21/4.0.3.22/4.1.0.34/4.1.2.17
-wechat = WeChat("4.1.2.17")
-
-
-@wechat.handle(events.WINDOW_HANDLE_CHANGE_MESSAGE)
-def _(bot: WeChat, event: dict):
-    # 解除微信3.x登录低版本限制
-    if bot.version.startswith("3") and event["data"].get("login_hwnd"):
-        go_wechat3(event["data"]["pid"], "all", "Windows 11 x64", "Windows 10 x86", bot.version, "3.9.12.56")
-        bot.refresh_qrcode(event["client_id"])
+# bypass_version=True 自动解除微信3.x低版本登录限制
+wechat = WeChat("3.9.10.19", bypass_version=True)
 
 
 @wechat.handle(events.USER_LOGIN_MESSAGE)
