@@ -106,8 +106,6 @@ def on_message(bot: Bot, event: Event):
 bot.run()
 ```
 
-QQ交流群：705791428
-
 开源版本：
 
 微信3.9.5.81版本开发框架项目地址：https://github.com/miloira/wxhook
